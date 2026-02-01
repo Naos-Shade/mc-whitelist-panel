@@ -94,8 +94,8 @@ app.post('/api/whitelist', requireAuth, async (req, res) => {
     return res.status(400).json({ error: 'Pseudo requis' });
   }
 
-  // Sanitize
-  username = username.trim().replace(/[^a-zA-Z0-9_\.]/g, '');
+  // Sanitize - allow letters, numbers, underscore, dot, hyphen, space
+  username = username.trim().replace(/[^a-zA-Z0-9_\.\- ]/g, '');
   if (username.length < 1 || username.length > 32) {
     return res.status(400).json({ error: 'Pseudo invalide' });
   }
