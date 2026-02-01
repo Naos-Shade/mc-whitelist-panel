@@ -1,0 +1,589 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MC Whitelist Manager</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Inter', system-ui, sans-serif;
+      background: linear-gradient(135deg, #0f0c29 0%, #302b63 50%, #24243e 100%);
+      min-height: 100vh;
+      color: #fff;
+      padding: 20px;
+    }
+
+    .container {
+      max-width: 600px;
+      margin: 0 auto;
+    }
+
+    .card {
+      background: rgba(255, 255, 255, 0.08);
+      backdrop-filter: blur(20px);
+      border-radius: 20px;
+      padding: 30px;
+      margin-bottom: 20px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+    }
+
+    .logo {
+      text-align: center;
+      margin-bottom: 30px;
+    }
+
+    .logo h1 {
+      font-size: 32px;
+      font-weight: 700;
+      background: linear-gradient(135deg, #00ff88, #00d4ff);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .logo p {
+      color: rgba(255, 255, 255, 0.6);
+      margin-top: 8px;
+    }
+
+    h2 {
+      font-size: 18px;
+      font-weight: 600;
+      margin-bottom: 20px;
+      color: #fff;
+    }
+
+    .input-group {
+      margin-bottom: 20px;
+    }
+
+    .input-group label {
+      display: block;
+      margin-bottom: 8px;
+      color: rgba(255, 255, 255, 0.7);
+      font-size: 14px;
+    }
+
+    input[type="text"],
+    input[type="password"] {
+      width: 100%;
+      padding: 16px 20px;
+      border: 2px solid rgba(255, 255, 255, 0.1);
+      border-radius: 12px;
+      background: rgba(0, 0, 0, 0.3);
+      color: #fff;
+      font-size: 16px;
+      transition: all 0.3s ease;
+    }
+
+    input:focus {
+      outline: none;
+      border-color: #00ff88;
+      box-shadow: 0 0 20px rgba(0, 255, 136, 0.2);
+    }
+
+    input::placeholder {
+      color: rgba(255, 255, 255, 0.4);
+    }
+
+    .btn {
+      padding: 16px 32px;
+      border: none;
+      border-radius: 12px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, #00ff88, #00cc6a);
+      color: #000;
+      width: 100%;
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 30px rgba(0, 255, 136, 0.4);
+    }
+
+    .btn-secondary {
+      background: rgba(255, 255, 255, 0.1);
+      color: #fff;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+
+    .btn-secondary:hover {
+      background: rgba(255, 255, 255, 0.2);
+    }
+
+    .btn-danger {
+      background: linear-gradient(135deg, #ff4757, #ff3838);
+      color: #fff;
+      padding: 10px 16px;
+      font-size: 14px;
+    }
+
+    .btn-danger:hover {
+      transform: scale(1.05);
+    }
+
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+
+    .status-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 16px;
+      border-radius: 50px;
+      font-size: 14px;
+      font-weight: 500;
+    }
+
+    .status-online {
+      background: rgba(0, 255, 136, 0.15);
+      color: #00ff88;
+    }
+
+    .status-offline {
+      background: rgba(255, 71, 87, 0.15);
+      color: #ff4757;
+    }
+
+    .add-form {
+      display: flex;
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+
+    .add-form input {
+      flex: 1;
+    }
+
+    .add-form .btn {
+      white-space: nowrap;
+    }
+
+    .checkbox-group {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+
+    .checkbox-group input[type="checkbox"] {
+      width: 20px;
+      height: 20px;
+      cursor: pointer;
+      accent-color: #00ff88;
+    }
+
+    .checkbox-group label {
+      color: rgba(255, 255, 255, 0.8);
+      cursor: pointer;
+      font-size: 14px;
+    }
+
+    .message {
+      padding: 12px 16px;
+      border-radius: 10px;
+      margin-top: 16px;
+      text-align: center;
+      font-weight: 500;
+    }
+
+    .message-success {
+      background: rgba(0, 255, 136, 0.15);
+      color: #00ff88;
+    }
+
+    .message-error {
+      background: rgba(255, 71, 87, 0.15);
+      color: #ff4757;
+    }
+
+    .player-list {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .player-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 16px 20px;
+      background: rgba(0, 0, 0, 0.2);
+      border-radius: 12px;
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      transition: all 0.2s ease;
+    }
+
+    .player-item:hover {
+      background: rgba(0, 0, 0, 0.3);
+      border-color: rgba(255, 255, 255, 0.1);
+    }
+
+    .player-info {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .player-icon {
+      font-size: 28px;
+    }
+
+    .player-name {
+      font-weight: 600;
+      font-size: 16px;
+    }
+
+    .player-badge {
+      padding: 4px 12px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .badge-java {
+      background: rgba(0, 170, 255, 0.2);
+      color: #00aaff;
+    }
+
+    .badge-bedrock {
+      background: rgba(255, 170, 0, 0.2);
+      color: #ffaa00;
+    }
+
+    .empty-state {
+      text-align: center;
+      padding: 40px 20px;
+      color: rgba(255, 255, 255, 0.4);
+    }
+
+    .empty-state span {
+      font-size: 48px;
+      display: block;
+      margin-bottom: 16px;
+    }
+
+    #login-section { display: block; }
+    #panel-section { display: none; }
+
+    .loading {
+      text-align: center;
+      padding: 20px;
+      color: rgba(255, 255, 255, 0.5);
+    }
+
+    @media (max-width: 500px) {
+      .add-form {
+        flex-direction: column;
+      }
+
+      .header {
+        flex-direction: column;
+        gap: 16px;
+        align-items: flex-start;
+      }
+
+      .player-item {
+        flex-direction: column;
+        gap: 12px;
+        align-items: flex-start;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <!-- Login Section -->
+    <div id="login-section">
+      <div class="card">
+        <div class="logo">
+          <h1>🎮 MC Whitelist</h1>
+          <p>Gestionnaire de whitelist Minecraft</p>
+        </div>
+        <form id="login-form">
+          <div class="input-group">
+            <label for="password">Mot de passe administrateur</label>
+            <input type="password" id="password" placeholder="Entrez le mot de passe..." required>
+          </div>
+          <button type="submit" class="btn btn-primary">Se connecter</button>
+          <div id="login-error" class="message message-error" style="display: none;"></div>
+        </form>
+      </div>
+    </div>
+
+    <!-- Panel Section -->
+    <div id="panel-section">
+      <div class="card">
+        <div class="header">
+          <div class="logo" style="margin-bottom: 0;">
+            <h1 style="font-size: 24px;">🎮 Whitelist</h1>
+          </div>
+          <div style="display: flex; align-items: center; gap: 12px;">
+            <span id="server-status" class="status-badge status-offline">Chargement...</span>
+            <button id="logout-btn" class="btn btn-secondary">Déconnexion</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <h2>➕ Ajouter un joueur</h2>
+        <form id="add-form">
+          <div class="add-form">
+            <input type="text" id="username" placeholder="Pseudo du joueur..." required>
+            <button type="submit" class="btn btn-primary">Ajouter</button>
+          </div>
+          <div class="checkbox-group">
+            <input type="checkbox" id="is-bedrock">
+            <label for="is-bedrock">Joueur Bedrock (mobile / console)</label>
+          </div>
+          <div id="add-message" class="message" style="display: none;"></div>
+        </form>
+      </div>
+
+      <div class="card">
+        <div class="header" style="margin-bottom: 16px;">
+          <h2 style="margin-bottom: 0;">📋 Joueurs whitelistés</h2>
+          <button id="refresh-btn" class="btn btn-secondary">🔄 Actualiser</button>
+        </div>
+        <div id="player-list">
+          <div class="loading">Chargement...</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    let authToken = '';
+
+    // API helper
+    async function api(url, options = {}) {
+      const response = await fetch(url, {
+        ...options,
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': authToken,
+          ...options.headers
+        }
+      });
+      return response.json();
+    }
+
+    // Check stored session
+    function init() {
+      const stored = localStorage.getItem('mc-panel-token');
+      if (stored) {
+        authToken = stored;
+        showPanel();
+      }
+    }
+
+    // Show/hide sections
+    function showLogin() {
+      document.getElementById('login-section').style.display = 'block';
+      document.getElementById('panel-section').style.display = 'none';
+    }
+
+    function showPanel() {
+      document.getElementById('login-section').style.display = 'none';
+      document.getElementById('panel-section').style.display = 'block';
+      loadWhitelist();
+      loadStatus();
+    }
+
+    // Login
+    document.getElementById('login-form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const errorEl = document.getElementById('login-error');
+      errorEl.style.display = 'none';
+
+      const password = document.getElementById('password').value;
+
+      try {
+        const data = await api('/api/login', {
+          method: 'POST',
+          body: JSON.stringify({ password })
+        });
+
+        if (data.token) {
+          authToken = data.token;
+          localStorage.setItem('mc-panel-token', authToken);
+          showPanel();
+        } else {
+          errorEl.textContent = data.error || 'Erreur de connexion';
+          errorEl.style.display = 'block';
+        }
+      } catch (error) {
+        errorEl.textContent = 'Erreur de connexion au serveur';
+        errorEl.style.display = 'block';
+      }
+    });
+
+    // Logout
+    document.getElementById('logout-btn').addEventListener('click', async () => {
+      await api('/api/logout', { method: 'POST' });
+      authToken = '';
+      localStorage.removeItem('mc-panel-token');
+      showLogin();
+    });
+
+    // Load whitelist
+    async function loadWhitelist() {
+      const container = document.getElementById('player-list');
+      container.innerHTML = '<div class="loading">Chargement...</div>';
+
+      try {
+        const data = await api('/api/whitelist');
+
+        if (data.error) {
+          container.innerHTML = `<div class="message message-error">${data.error}</div>`;
+          if (data.error === 'Non connecté') {
+            localStorage.removeItem('mc-panel-token');
+            showLogin();
+          }
+          return;
+        }
+
+        if (!data.players || data.players.length === 0) {
+          container.innerHTML = `
+            <div class="empty-state">
+              <span>📭</span>
+              <p>Aucun joueur dans la whitelist</p>
+            </div>
+          `;
+          return;
+        }
+
+        container.innerHTML = '<div class="player-list">' + data.players.map(player => {
+          const isBedrock = player.startsWith('.');
+          return `
+            <div class="player-item">
+              <div class="player-info">
+                <span class="player-icon">${isBedrock ? '📱' : '💻'}</span>
+                <span class="player-name">${escapeHtml(player)}</span>
+                <span class="player-badge ${isBedrock ? 'badge-bedrock' : 'badge-java'}">
+                  ${isBedrock ? 'Bedrock' : 'Java'}
+                </span>
+              </div>
+              <button class="btn btn-danger" onclick="removePlayer('${escapeHtml(player)}')">
+                Supprimer
+              </button>
+            </div>
+          `;
+        }).join('') + '</div>';
+      } catch (error) {
+        container.innerHTML = '<div class="message message-error">Erreur de chargement</div>';
+      }
+    }
+
+    // Load server status
+    async function loadStatus() {
+      const statusEl = document.getElementById('server-status');
+      try {
+        const data = await api('/api/status');
+        if (data.online) {
+          statusEl.className = 'status-badge status-online';
+          statusEl.textContent = `🟢 ${data.playersOnline}/${data.maxPlayers} en ligne`;
+        } else {
+          statusEl.className = 'status-badge status-offline';
+          statusEl.textContent = '🔴 Serveur hors ligne';
+        }
+      } catch (error) {
+        statusEl.className = 'status-badge status-offline';
+        statusEl.textContent = '🔴 Erreur';
+      }
+    }
+
+    // Add player
+    document.getElementById('add-form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const messageEl = document.getElementById('add-message');
+      messageEl.style.display = 'none';
+
+      const username = document.getElementById('username').value.trim();
+      const isBedrock = document.getElementById('is-bedrock').checked;
+
+      if (!username) return;
+
+      try {
+        const data = await api('/api/whitelist', {
+          method: 'POST',
+          body: JSON.stringify({ username, isBedrock })
+        });
+
+        if (data.success) {
+          messageEl.className = 'message message-success';
+          messageEl.textContent = data.message;
+          messageEl.style.display = 'block';
+          document.getElementById('username').value = '';
+          document.getElementById('is-bedrock').checked = false;
+          loadWhitelist();
+        } else {
+          messageEl.className = 'message message-error';
+          messageEl.textContent = data.error || 'Erreur';
+          messageEl.style.display = 'block';
+        }
+
+        setTimeout(() => { messageEl.style.display = 'none'; }, 3000);
+      } catch (error) {
+        messageEl.className = 'message message-error';
+        messageEl.textContent = 'Erreur de connexion';
+        messageEl.style.display = 'block';
+      }
+    });
+
+    // Remove player
+    async function removePlayer(username) {
+      if (!confirm(`Supprimer ${username} de la whitelist ?`)) return;
+
+      try {
+        await api(`/api/whitelist/${encodeURIComponent(username)}`, {
+          method: 'DELETE'
+        });
+        loadWhitelist();
+      } catch (error) {
+        alert('Erreur lors de la suppression');
+      }
+    }
+
+    // Refresh
+    document.getElementById('refresh-btn').addEventListener('click', () => {
+      loadWhitelist();
+      loadStatus();
+    });
+
+    // Helper
+    function escapeHtml(text) {
+      const div = document.createElement('div');
+      div.textContent = text;
+      return div.innerHTML;
+    }
+
+    // Auto refresh
+    setInterval(loadStatus, 30000);
+
+    // Init
+    init();
+  </script>
+</body>
+</html>

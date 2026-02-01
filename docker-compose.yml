@@ -1,0 +1,12 @@
+services:
+  whitelist-panel:
+    build: .
+    container_name: mc-whitelist-panel
+    restart: unless-stopped
+    network_mode: host
+    environment:
+      - RCON_HOST=127.0.0.1
+      - RCON_PORT=25575
+      - RCON_PASSWORD=ChangeMe_SecurePassword123
+      - ADMIN_PASSWORD=123Soan123
+      - PORT=8080
