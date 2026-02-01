@@ -16,20 +16,31 @@ const sessions = {};
 app.use(express.json());
 app.use(express.static(path.join(__dirname, 'public')));
 
-// RCON helper
+// RCON helper with better error handling
 async function rcon(command) {
+  let client = null;
   try {
-    const client = new Rcon({
+    client = new Rcon({
       host: RCON_HOST,
       port: RCON_PORT,
-      password: RCON_PASSWORD
+      password: RCON_PASSWORD,
+      timeout: 5000
     });
+
+    // Handle connection errors
+    client.on('error', (err) => {
+      console.error('RCON connection error:', err.message);
+    });
+
     await client.connect();
     const response = await client.send(command);
     await client.end();
     return response;
   } catch (error) {
     console.error('RCON Error:', error.message);
+    if (client) {
+      try { await client.end(); } catch (e) { /* ignore */ }
+    }
     return null;
   }
 }
